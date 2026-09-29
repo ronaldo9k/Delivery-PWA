@@ -222,6 +222,36 @@
     ).format(d);   // "yyyy-MM-dd" 모양으로 나옴
 
   }
+    // ==========================================================
+  // ⭐ 어떤 모양이든 'yyyy-MM-dd' 로 통일 (PWA 버전)
+  // ==========================================================
+
+  function normalizeDatePwa_(value) {
+
+    if (!value) return "";
+
+    let s = String(value).trim();
+
+    if (!s) return "";
+
+    // 이미 yyyy-MM-dd 모양
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+      return s.substring(0, 10);
+    }
+
+    // '2026. 9. 29.' / '2026/9/29' 모양
+    const m = s.match(/(\d{4})[\.\/\-\s]+(\d{1,2})[\.\/\-\s]+(\d{1,2})/);
+
+    if (m) {
+      return m[1] + "-" +
+             ("0" + m[2]).slice(-2) + "-" +
+             ("0" + m[3]).slice(-2);
+    }
+
+    return "";
+
+  }
+
 
 
   // ==========================================================
@@ -340,31 +370,33 @@
 
 
     // ========================================================
-    // ⭐⭐ v3 이중 안전장치 :
+    // ⭐⭐ v3.1 이중 안전장치 :
     //     폰에서도 한 번 더 검사해서
-    //     "전송일이 오늘 or 어제" 인 것만 보여준다.
-    //     (GAS에서 이미 걸러줬지만, 만약을 위해 이중 잠금!)
+    //     "납품요청일이 어제/오늘/내일" 인 것만 보여준다.
     // ========================================================
 
-    const today = seoulDate(0);
-    const yesterday = seoulDate(-1);
+    const dYesterday = seoulDate(-1);
+    const dToday     = seoulDate(0);
+    const dTomorrow  = seoulDate(1);
 
     rows = rows.filter(function (row) {
 
-      const sent = String(row.sentDate || "").trim();
+      const req = normalizeDatePwa_(row.requestDate);
 
-      // sentDate 가 없으면(예전 형식 데이터) 안전하게 보여주지 않음
-      if (!sent) {
+      // 납품요청일이 없으면 보여주지 않음
+      if (!req) {
         return false;
       }
 
-      return (sent === today || sent === yesterday);
+      return (req === dYesterday || req === dToday || req === dTomorrow);
 
     });
 
 
+
     document.getElementById("status").textContent =
-      "📦 오늘 택배 " + rows.length + "건";
+      "📦 납품요청일 기준 택배 " + rows.length + "건 (어제~내일)";
+
 
 
     const container = document.getElementById("cards");
