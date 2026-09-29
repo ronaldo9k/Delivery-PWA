@@ -4,7 +4,7 @@
 //    예전에 저장된 옛날 복사본(캐시)은 전부 자동 삭제됩니다.
 // ============================================================
 
-const CACHE_VERSION = 'prozyme-pwa-cache-v3';
+const CACHE_VERSION = 'prozyme-pwa-cache-v4';
 
 // 미리 저장해두는 껍데기 파일들
 const ASSETS = [
