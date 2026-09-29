@@ -1,367 +1,808 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <meta name="theme-color" content="#111111">
-  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <title>푸로찜 에스 택배 카드</title>
+
+  <title>푸로찜 에스 택배등록</title>
+
   <style>
-    :root {
-      --gold: #d4af37;
-      --bg: #111;
-      --card: #1d1d1d;
-      --line: #333;
-      --text: #fff;
-      --muted: #aaa;
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, "Noto Sans KR", sans-serif;
-      padding: 16px 12px 32px;
-    }
-    .wrap { max-width: 620px; margin: 0 auto; }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    h1 { font-size: 20px; margin: 0; color: var(--gold); }
-    .refresh {
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-weight: 700;
-    }
-    .status {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .client {
-      font-size: 18px;
-      font-weight: 800;
-    }
-    .meta {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-      border-top: 1px solid var(--line);
-      padding: 10px 0;
-    }
-    .label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 3px;
-    }
-    .value {
-      font-size: 15px;
-      line-height: 1.35;
-      word-break: break-word;
-      white-space: pre-wrap;
-    }
-    .copy {
-      min-width: 58px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--gold);
-      color: #111;
-      padding: 10px 9px;
-      font-weight: 800;
-      font-size: 13px;
-      touch-action: manipulation;
-    }
-    .copy.done { background: #fff; }
-    .empty, .error, .setup {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 20px;
-      line-height: 1.5;
-    }
-    .setup input {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
+      padding: 0;
       background: #111;
       color: #fff;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Noto Sans KR",
+        "Malgun Gothic",
+        sans-serif;
     }
-    .setup button {
-      margin-top: 10px;
+
+    .app {
       width: 100%;
-      padding: 12px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--gold);
-      font-weight: 800;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
     }
-    .hidden { display: none; }
+
+    .header {
+      text-align: center;
+      padding: 12px 0 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #d4af37;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .status {
+      margin: 0 0 15px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #1d1d1d;
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .card {
+      background: #202020;
+      border: 1px solid #383838;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .client-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .delivery-type {
+      font-size: 12px;
+      color: #d4af37;
+      border: 1px solid #806b27;
+      border-radius: 20px;
+      padding: 5px 9px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 9px;
+      min-height: 42px;
+    }
+
+    .info-label {
+      width: 70px;
+      flex-shrink: 0;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .info-value {
+      flex: 1;
+      min-width: 0;
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 9px;
+      background: #d4af37;
+      color: #111;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.95);
+    }
+
+    .copy-btn.done {
+      background: #4caf50;
+      color: #fff;
+    }
+
+    .meta {
+      margin-top: 13px;
+      padding-top: 12px;
+      border-top: 1px solid #383838;
+      color: #aaa;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .empty {
+      padding: 40px 15px;
+      text-align: center;
+      color: #999;
+      background: #1b1b1b;
+      border-radius: 15px;
+    }
+
+    .refresh-btn {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 12px;
+      background: #d4af37;
+      color: #111;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .refresh-btn:active {
+      transform: scale(0.98);
+    }
+
+    .token-box {
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .token-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    .token-input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #444;
+      border-radius: 9px;
+      background: #111;
+      color: #fff;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .token-save {
+      width: 100%;
+      height: 44px;
+      margin-top: 9px;
+      border: 0;
+      border-radius: 9px;
+      background: #555;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .loading {
+      padding: 30px;
+      text-align: center;
+      color: #d4af37;
+    }
   </style>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <h1>🚚 푸로찜 에스 택배 카드</h1>
-    <button class="refresh" id="refreshBtn">새로고침</button>
-  </header>
 
-  <div class="status" id="status">오늘 택배 정보를 불러오는 중...</div>
-  <main id="app"></main>
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <div class="title">푸로찜 에스</div>
+    <div class="subtitle">오늘 택배 발송 등록</div>
+  </div>
+
+  <div id="tokenBox" class="token-box hidden">
+    <div class="token-title">🔐 PWA 접속 토큰</div>
+
+    <input
+      id="tokenInput"
+      class="token-input"
+      type="password"
+      placeholder="GAS에서 만든 PWA 토큰"
+    >
+
+    <button
+      class="token-save"
+      onclick="saveToken()"
+    >
+      토큰 저장하고 시작
+    </button>
+  </div>
+
+  <div id="status" class="status">
+    불러오는 중...
+  </div>
+
+  <button
+    class="refresh-btn"
+    onclick="loadShippingCards()"
+  >
+    🔄 새로고침
+  </button>
+
+  <div id="cards"></div>
+
 </div>
 
+
 <script>
-  // ================================================================
-  // ⭐ 1. 여기에 GAS 웹앱 주소만 넣습니다.
-  //    예: https://script.google.com/macros/s/XXXXXXXX/exec
-  // ================================================================
-  const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbybzr2KUiIg5bvHFvlQG1bQyzUUDQHdMCZXPJ-WQGJfrcd9Ga63Y1NhaRdzcq1UwyKxWA/exec';
 
-  const TOKEN_STORAGE_KEY = 'prozyme_parcel_pwa_token_v1';
-  const app = document.getElementById('app');
-  const statusEl = document.getElementById('status');
-  const refreshBtn = document.getElementById('refreshBtn');
+  // ==========================================================
+  // ⭐ GAS 웹앱 주소
+  // ==========================================================
 
-  let callbackSeq = 0;
+  const GAS_API_URL =
+    "https://script.google.com/macros/s/AKfycbybzr2KUiIg5bvHFvlQG1bQyzUUDQHdMCZXPJ-WQGJfrcd9Ga63Y1NhaRdzcq1UwyKxWA/exec";
+
+
+  // ==========================================================
+  // ⭐ 토큰 저장
+  // ==========================================================
 
   function getToken() {
-    const hash = location.hash.replace(/^#/, '');
-    const params = new URLSearchParams(hash);
-    const hashToken = params.get('key');
-
-    if (hashToken) {
-      localStorage.setItem(TOKEN_STORAGE_KEY, hashToken);
-      history.replaceState(null, '', location.pathname + location.search);
-      return hashToken;
-    }
-
-    return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
+    return localStorage.getItem("PROZYME_PWA_TOKEN") || "";
   }
 
-  function showSetup() {
-    statusEl.textContent = '처음 한 번만 비밀토큰을 입력하세요.';
-    app.innerHTML = `
-      <div class="setup">
-        <b>🔐 PWA 비밀토큰</b>
-        <div style="color:#aaa;margin-top:6px;font-size:13px;">
-          Apps Script에서 만든 PWA_ACCESS_TOKEN을 넣으세요.
-        </div>
-        <input id="tokenInput" type="password" autocomplete="off" placeholder="비밀토큰 붙여넣기">
-        <button id="saveTokenBtn">저장하고 불러오기</button>
-      </div>
-    `;
 
-    document.getElementById('saveTokenBtn').addEventListener('click', () => {
-      const token = document.getElementById('tokenInput').value.trim();
-      if (!token) return alert('비밀토큰을 입력하세요.');
-      localStorage.setItem(TOKEN_STORAGE_KEY, token);
-      loadCards();
-    });
-  }
+  function saveToken() {
 
-  function apiUrl(token, callbackName) {
-    const sep = GAS_API_URL.indexOf('?') >= 0 ? '&' : '?';
-    return GAS_API_URL + sep +
-      'action=shippingCards' +
-      '&key=' + encodeURIComponent(token) +
-      '&callback=' + encodeURIComponent(callbackName) +
-      '&_=' + Date.now();
-  }
+    const input = document.getElementById("tokenInput");
 
-  function loadCards() {
-    if (!GAS_API_URL || GAS_API_URL.indexOf('여기에_GAS') >= 0) {
-      statusEl.textContent = 'GAS 웹앱 주소가 아직 입력되지 않았습니다.';
-      app.innerHTML = '<div class="error">index.html의 <b>GAS_API_URL</b>에 Apps Script 웹앱 주소를 넣어주세요.</div>';
+    const token = input.value.trim();
+
+    if (!token) {
+      alert("토큰을 입력해주세요.");
       return;
     }
+
+    localStorage.setItem("PROZYME_PWA_TOKEN", token);
+
+    document.getElementById("tokenBox").classList.add("hidden");
+
+    loadShippingCards();
+  }
+
+
+  // ==========================================================
+  // ⭐ 페이지 시작
+  // ==========================================================
+
+  window.addEventListener("load", function() {
 
     const token = getToken();
+
     if (!token) {
-      showSetup();
+
+      document.getElementById("tokenBox")
+        .classList.remove("hidden");
+
+      document.getElementById("status").textContent =
+        "처음 한 번만 PWA 토큰을 입력해주세요.";
+
       return;
     }
 
-    const callbackName = 'prozymePwaCallback_' + (++callbackSeq);
-    const script = document.createElement('script');
-    let finished = false;
+    loadShippingCards();
 
-    window[callbackName] = function(data) {
-      finished = true;
-      delete window[callbackName];
-      script.remove();
+  });
 
-      if (!data || !data.ok) {
-        if (data && data.error === '접근 권한이 없습니다.') {
-          localStorage.removeItem(TOKEN_STORAGE_KEY);
-          showSetup();
-          return;
+
+  // ==========================================================
+  // ⭐ 오늘 택배 데이터 가져오기
+  // ==========================================================
+
+  function loadShippingCards() {
+
+    const token = getToken();
+
+    if (!token) {
+
+      document.getElementById("tokenBox")
+        .classList.remove("hidden");
+
+      return;
+    }
+
+
+    document.getElementById("status").textContent =
+      "📦 택배 발송 정보를 불러오는 중...";
+
+
+    document.getElementById("cards").innerHTML =
+      '<div class="loading">잠시만 기다려주세요...</div>';
+
+
+    // ========================================================
+    // ⭐ JSONP 방식
+    // ⭐ GitHub → GAS 호출 시 브라우저 CORS 문제를 피하기 위함
+    // ========================================================
+
+    const callbackName =
+      "prozymePwaCallback_" + Date.now();
+
+
+    window[callbackName] = function(result) {
+
+      try {
+
+        renderCards(result);
+
+      } finally {
+
+        delete window[callbackName];
+
+        const script =
+          document.getElementById(callbackName);
+
+        if (script) {
+          script.remove();
         }
-        showError(data && data.error ? data.error : '데이터를 가져오지 못했습니다.');
-        return;
+
       }
 
-      renderCards(data);
     };
+
+
+    const script = document.createElement("script");
+
+    script.id = callbackName;
+
+    script.src =
+      GAS_API_URL
+      + "?action=shippingCards"
+      + "&key=" + encodeURIComponent(token)
+      + "&callback=" + encodeURIComponent(callbackName)
+      + "&t=" + Date.now();
+
 
     script.onerror = function() {
-      if (finished) return;
+
+      document.getElementById("status").textContent =
+        "❌ GAS 연결에 실패했습니다.";
+
+      document.getElementById("cards").innerHTML =
+        '<div class="empty">GAS 웹앱 연결을 확인해주세요.</div>';
+
       delete window[callbackName];
+
       script.remove();
-      showError('GAS 웹앱 호출에 실패했습니다. 웹앱 URL과 배포 상태를 확인하세요.');
+
     };
 
-    script.src = apiUrl(token, callbackName);
+
     document.body.appendChild(script);
-    statusEl.textContent = '오늘 택배 정보를 불러오는 중...';
+
   }
 
-  function showError(message) {
-    statusEl.textContent = '오류';
-    app.innerHTML = '<div class="error">❌ ' + escapeHtml(message) + '</div>';
-  }
 
-  function renderCards(data) {
-    statusEl.textContent = data.date + ' · 오늘 택배 ' + data.count + '건';
+  // ==========================================================
+  // ⭐ 카드 화면 만들기
+  // ==========================================================
 
-    if (!data.rows || data.rows.length === 0) {
-      app.innerHTML = '<div class="empty">📭 오늘 등록된 택배가 없습니다.</div>';
+  function renderCards(result) {
+
+    if (!result) {
+
+      showError("응답이 없습니다.");
+
       return;
     }
 
-    app.innerHTML = data.rows.map((r, index) => {
-      const cardId = 'card-' + index;
-      return `
-        <section class="card" id="${cardId}">
-          <div class="card-head">
-            <div>
-              <div class="client">🏢 ${escapeHtml(r.clientName || '-')}</div>
-              <div class="meta">${escapeHtml(r.deliveryType || '-')} · ${escapeHtml(r.spec || '-')} / ${escapeHtml(String(r.qty ?? '-'))}개 · 납품요청일 ${escapeHtml(r.requestDate || '-')}</div>
-            </div>
-          </div>
 
-          ${copyRow('📞', '연락처 1', r.phone, cardId + '-phone')}
-          ${copyRow('📍', '검색주소', r.search, cardId + '-search')}
-          ${copyRow('🏠', '상세주소', r.detail, cardId + '-detail')}
-          ${copyRow('🗺️', '도로명 DB주소', r.road, cardId + '-road')}
-          ${copyRow('🧭', '지번주소', r.jibun, cardId + '-jibun')}
-        </section>
-      `;
-    }).join('');
+    if (result.ok === false) {
 
-    app.querySelectorAll('.copy').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const value = btn.dataset.value || '';
-        const original = btn.textContent;
+      showError(
+        result.message || "데이터를 가져오지 못했습니다."
+      );
 
-        try {
-          await copyText(value);
-          btn.textContent = '복사됨 ✓';
-          btn.classList.add('done');
-          setTimeout(() => {
-            btn.textContent = original;
-            btn.classList.remove('done');
-          }, 900);
-        } catch (e) {
-          alert('복사에 실패했습니다. 휴대폰 브라우저의 클립보드 권한을 확인하세요.');
-        }
-      });
+      return;
+    }
+
+
+    // 여러 형태의 응답을 안전하게 처리
+    let rows = [];
+
+    if (Array.isArray(result)) {
+
+      rows = result;
+
+    } else if (Array.isArray(result.cards)) {
+
+      rows = result.cards;
+
+    } else if (Array.isArray(result.rows)) {
+
+      rows = result.rows;
+
+    } else if (Array.isArray(result.data)) {
+
+      rows = result.data;
+
+    }
+
+
+    document.getElementById("status").textContent =
+      "📦 오늘 택배 " + rows.length + "건";
+
+
+    const container =
+      document.getElementById("cards");
+
+
+    container.innerHTML = "";
+
+
+    if (rows.length === 0) {
+
+      container.innerHTML =
+        '<div class="empty">'
+        + '오늘 택배 발송 건이 없습니다.'
+        + '</div>';
+
+      return;
+    }
+
+
+    rows.forEach(function(row, index) {
+
+      container.appendChild(
+        createCard(row, index)
+      );
+
     });
+
   }
 
-  function copyRow(icon, label, value, id) {
-    const safeValue = value || '';
-    return `
-      <div class="row">
-        <div>
-          <div class="label">${icon} ${escapeHtml(label)}</div>
-          <div class="value">${escapeHtml(safeValue || '-')}</div>
+
+  // ==========================================================
+  // ⭐ 카드 하나 만들기
+  // ==========================================================
+
+  function createCard(row, index) {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+
+    const client =
+      row.clientName ||
+      row.client ||
+      row.거래처 ||
+      "";
+
+
+    const phone =
+      row.phone ||
+      row.연락처 ||
+      row["연락처 1"] ||
+      "";
+
+
+    const search =
+      row.search ||
+      row.검색주소 ||
+      "";
+
+
+    const detail =
+      row.detail ||
+      row.상세주소 ||
+      "";
+
+
+    const road =
+      row.road ||
+      row.도로명주소 ||
+      "";
+
+
+    const jibun =
+      row.jibun ||
+      row.지번주소 ||
+      "";
+
+
+    const deliveryType =
+      row.deliveryType ||
+      row.납품형태 ||
+      "택배 발송";
+
+
+    const spec =
+      row.spec ||
+      row.규격 ||
+      row["구분(규격)"] ||
+      "";
+
+
+    const qty =
+      row.qty ||
+      row.수량 ||
+      "";
+
+
+    const requestDate =
+      row.requestDate ||
+      row.납품요청일 ||
+      "";
+
+
+    card.innerHTML = `
+
+      <div class="card-header">
+
+        <div class="client-name">
+          ${escapeHtml(client)}
         </div>
-        <button class="copy" id="${id}" data-value="${escapeAttr(safeValue)}">복사</button>
+
+        <div class="delivery-type">
+          ${escapeHtml(deliveryType)}
+        </div>
+
       </div>
+
+
+      ${makeInfoRow(
+        "📞 연락처",
+        phone
+      )}
+
+
+      ${makeInfoRow(
+        "📍 검색주소",
+        search
+      )}
+
+
+      ${makeInfoRow(
+        "🏠 상세주소",
+        detail
+      )}
+
+
+      ${makeInfoRow(
+        "🧭 도로명",
+        road
+      )}
+
+
+      ${makeInfoRow(
+        "📌 지번",
+        jibun
+      )}
+
+
+      <div class="meta">
+
+        📦 규격 : ${escapeHtml(spec)}
+        <br>
+
+        🔢 수량 : ${escapeHtml(qty)}
+        <br>
+
+        📅 납품요청일 : ${escapeHtml(requestDate)}
+
+      </div>
+
     `;
+
+
+    return card;
+
   }
 
-  async function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
+
+  // ==========================================================
+  // ⭐ 한 줄 + 복사 버튼
+  // ==========================================================
+
+  function makeInfoRow(label, value) {
+
+    if (!value) {
+      value = "-";
     }
 
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
 
-    const ok = document.execCommand('copy');
-    textarea.remove();
+    const safeValue =
+      escapeHtml(value);
 
-    if (!ok) throw new Error('copy failed');
+
+    return `
+
+      <div class="info-row">
+
+        <div class="info-label">
+          ${label}
+        </div>
+
+        <div class="info-value">
+          ${safeValue}
+        </div>
+
+        <button
+          class="copy-btn"
+          onclick="copyText(this, ${JSON.stringify(String(value))})"
+        >
+          복사
+        </button>
+
+      </div>
+
+    `;
+
   }
+
+
+  // ==========================================================
+  // ⭐ 복사
+  // ==========================================================
+
+  async function copyText(button, text) {
+
+    try {
+
+      await navigator.clipboard.writeText(text);
+
+      const original =
+        button.textContent;
+
+      button.textContent =
+        "복사됨 ✓";
+
+      button.classList.add("done");
+
+
+      setTimeout(function() {
+
+        button.textContent =
+          original;
+
+        button.classList.remove("done");
+
+      }, 1200);
+
+
+    } catch (error) {
+
+      // 구형 브라우저 대비
+      const textarea =
+        document.createElement("textarea");
+
+      textarea.value = text;
+
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+
+      document.body.appendChild(textarea);
+
+      textarea.focus();
+      textarea.select();
+
+      document.execCommand("copy");
+
+      textarea.remove();
+
+
+      button.textContent =
+        "복사됨 ✓";
+
+      button.classList.add("done");
+
+
+      setTimeout(function() {
+
+        button.textContent =
+          "복사";
+
+        button.classList.remove("done");
+
+      }, 1200);
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // ⭐ HTML 안전 처리
+  // ==========================================================
 
   function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
   }
 
-  function escapeAttr(value) {
-    return escapeHtml(value).replace(/`/g, '&#096;');
+
+  // ==========================================================
+  // ⭐ 오류 표시
+  // ==========================================================
+
+  function showError(message) {
+
+    document.getElementById("status").textContent =
+      "❌ 오류";
+
+    document.getElementById("cards").innerHTML =
+      '<div class="empty">'
+      + escapeHtml(message)
+      + '</div>';
+
   }
 
-  refreshBtn.addEventListener('click', loadCards);
 
-  // 앱을 열었을 때 최신 정보 확인
-  loadCards();
+  // ==========================================================
+  // ⭐ 서비스 워커
+  // ==========================================================
 
-  // 1분마다 자동 새로고침
-  setInterval(loadCards, 60 * 1000);
+  if ("serviceWorker" in navigator) {
 
-  // PWA 설치 후 최신 index.html 확인
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').then(reg => {
-        reg.update();
-      }).catch(() => {});
+    window.addEventListener("load", function() {
+
+      navigator.serviceWorker.register("sw.js")
+        .catch(function(error) {
+
+          console.log(
+            "Service Worker 등록 실패:",
+            error
+          );
+
+        });
+
     });
+
   }
+
 </script>
+
 </body>
 </html>
