@@ -548,6 +548,9 @@
     const detail = row.detail || row.상세주소 || "";
     const road = row.road || row.도로명주소 || "";
     const jibun = row.jibun || row.지번주소 || "";
+
+    // ⭐ v4.2 [추가] : "지번상세" 값 (기존 값은 전혀 건드리지 않음)
+    const jibunDetail = makeJibunDetail_(jibun, detail);
     const deliveryType = row.deliveryType || row.납품형태 || "택배 발송";
     const spec = row.spec || row.규격 || row["구분(규격)"] || "";
     const qty = row.qty || row.수량 || "";
@@ -580,6 +583,7 @@
       ${makeInfoRow("🏠 상세주소", detail)}
       ${makeInfoRow("🧭 도로명", road)}
       ${makeInfoRow("📌 지번", jibun)}
+      ${makeInfoRow("🗺️ 지번상세", jibunDetail)}
 
 
       <div class="meta">
@@ -662,6 +666,130 @@
       </div>
 
     `;
+
+  }
+
+
+  // ==========================================================
+  // ⭐⭐ v4.2 [추가] : "지번상세" 만들기
+  //
+  //    · 지번주소에서 시/도 · 시/군/구 를 떼어내고
+  //      "동/읍/면/리/가" 부터 이어지는 부분만 남긴 뒤
+  //      상세주소(층·호수·메모 등)를 뒤에 붙여서 보여준다.
+  //    · 화면 모양과 복사 버튼은 기존 "검색주소" 줄과 100% 동일
+  //      (makeInfoRow 를 그대로 재사용 → 복사 3단계 로직 자동 적용)
+  //    · 기존 값·기존 줄은 손대지 않는다. (오직 추가만!)
+  // ==========================================================
+
+  function makeJibunDetail_(jibunRaw, detailRaw) {
+
+    // 1) 원본 정리 (여러 칸 공백 → 한 칸)
+    let jibun = String(jibunRaw || "").replace(/\s+/g, " ").trim();
+
+    const detail = String(detailRaw || "").replace(/\s+/g, " ").trim();
+
+    // 둘 다 비어있으면 빈 값 → makeInfoRow 가 "-" 로 표시
+    if (!jibun && !detail) {
+      return "";
+    }
+
+    // 2) 지번에 붙은 괄호 메모는 따로 떼어둔다.   예) (행복빌라)
+    let note = "";
+
+    if (jibun) {
+
+      const noteMatch = jibun.match(/\(([^)]*)\)/);
+
+      if (noteMatch) {
+        note = noteMatch[0];
+        jibun = jibun.replace(noteMatch[0], " ").replace(/\s+/g, " ").trim();
+      }
+
+    }
+
+    // 3) 지번에 콤마가 있으면 뒤쪽은 상세로 본다.   예) 역삼동 123-4, 5층
+    let jibunTail = "";
+
+    const commaIdx = jibun.indexOf(",");
+
+    if (commaIdx >= 0) {
+      jibunTail = jibun.slice(commaIdx + 1).trim();
+      jibun = jibun.slice(0, commaIdx).trim();
+    }
+
+    // 4) 시/도 · 시/군/구 를 떼고 "동/읍/면/리/가" 부터만 남긴다.
+    const shortJibun = shortenJibun_(jibun);
+
+    const outTokens = shortJibun ? shortJibun.split(" ").filter(Boolean) : [];
+
+    // 5) 상세 조각들을 "토큰 중복 없이" 뒤에 붙인다.
+    //    · 지번 콤마 뒤 값   · 카드의 상세주소   · 지번 괄호 메모
+    const extras = [jibunTail, detail, note];
+
+    for (let i = 0; i < extras.length; i++) {
+
+      const tokens = String(extras[i] || "")
+        .replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
+
+      for (let j = 0; j < tokens.length; j++) {
+
+        if (outTokens.indexOf(tokens[j]) >= 0) {
+          continue;   // ⭐ 이미 나온 토큰은 두 번 쓰지 않는다 (중복 방지)
+        }
+
+        outTokens.push(tokens[j]);
+
+      }
+
+    }
+
+    return outTokens.join(" ").trim();
+
+  }
+
+
+  // ----------------------------------------------------------
+  // ⭐ v4.2 [추가] : 지번주소에서 "동/읍/면/리/가" 부터만 남기기
+  //    (기존 splitAddress_ 의 "검색주소" 규칙과 같은 방식)
+  //      · 시/도 · 시/군/구 토큰은 건너뛴다.
+  //      · 세종특별자치시, "경기 성남시 분당구" 처럼
+  //        앞이 여러 단계여도 정상 동작한다.
+  //      · 동을 못 찾으면 앞쪽 시/도/구/군 토큰만 최대 3개 떼어낸다.
+  // ----------------------------------------------------------
+
+  function shortenJibun_(addr) {
+
+    const text = String(addr || "").replace(/\s+/g, " ").trim();
+
+    if (!text) {
+      return "";
+    }
+
+    const tokens = text.split(" ").filter(Boolean);
+
+    // 1) 동/읍/면/리/가/로/길 로 끝나는 첫 토큰부터 끝까지
+    for (let i = 0; i < tokens.length; i++) {
+
+      const t = tokens[i];
+
+      if (/(동|읍|면|리|가|로|길)$/.test(t) && !/(시|도|구|군)$/.test(t)) {
+        return tokens.slice(i).join(" ");
+      }
+
+    }
+
+    // 2) 못 찾으면 앞쪽 "시/도/구/군" 토큰만 최대 3개까지 떼어낸다.
+    let start = 0;
+
+    while (
+      start < tokens.length - 1 &&
+      start < 3 &&
+      /(시|도|구|군)$/.test(tokens[start])
+    ) {
+      start++;
+    }
+
+    return tokens.slice(start).join(" ");
 
   }
 
@@ -907,5 +1035,6 @@
 </script>
 
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
