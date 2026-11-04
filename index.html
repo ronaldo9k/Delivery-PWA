@@ -83,6 +83,32 @@
 
     .copy-btn.mini.done { background: #4caf50; color: #fff; border-color: #4caf50; }
 
+    /* ⭐ v5.0 : 제2배송지 박스 (송장 접수용 — 가장 중요한 정보라 금색 테두리) */
+    .second-box {
+      margin: 0 0 12px; padding: 10px 10px 2px;
+      border: 1px solid #806b27; border-radius: 14px;
+      background: linear-gradient(180deg, rgba(212,175,55,0.12), rgba(212,175,55,0.02));
+    }
+    .second-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px; gap: 8px;
+    }
+    .second-title { font-size: 14px; font-weight: 800; color: #d4af37; }
+    .second-badge {
+      font-size: 11px; border-radius: 20px; padding: 3px 8px;
+      border: 1px solid #666; color: #bbb; white-space: nowrap;
+    }
+    .second-badge.ok   { color: #7ee08a; border-color: #2e6b38; }
+    .second-badge.warn { color: #ffb4a8; border-color: #7a3a30; }
+    .second-copy { width: 100%; margin: 4px 0 10px; }
+
+    .hint {
+      margin: 0 0 12px; padding: 10px 12px; border-radius: 12px;
+      background: #191919; border: 1px dashed #3d3d3d;
+      color: #9a9a9a; font-size: 12px; line-height: 1.55;
+    }
+    .hint b { color: #d4af37; }
+
     .meta {
       margin-top: 13px; padding-top: 12px; border-top: 1px solid #383838;
       color: #aaa; font-size: 12px; line-height: 1.7;
@@ -210,6 +236,12 @@
     🔄 새로고침
   </button>
 
+  <div class="hint">
+    🚩 <b>제2배송지</b>가 있는 건은 카드 맨 위에 <b>금색 박스</b>로
+    납품처 · 연락처 · 주소가 함께 표시됩니다. (값이 없으면 박스가 나오지 않습니다)<br>
+    박스 안 <b>「제2배송지 전체 복사」</b>를 누르면 3개 값이 한 번에 복사됩니다.
+  </div>
+
   <div id="cards"></div>
 
 </div>
@@ -222,7 +254,7 @@
   // ==========================================================
 
   const GAS_API_URL =
-    "https://script.google.com/macros/s/AKfycbzkNQ9-hfVqEz0PseqTlC3vNWwzbL3idE10sA0ySA0ppsPzKP3j-OePHD3WlZO0JqiaNQ/exec";
+    "https://script.google.com/macros/s/AKfycbxBVuKhZoia9rvKIbBHUbhhFOG1T7c6dGLxRaKQP5ggCPQSnlT_SBcBcc4iWbP_6MuL7Q/exec";
 
 
   // ==========================================================
@@ -551,6 +583,13 @@
 
     // ⭐ v4.2 [추가] : "지번상세" 값 (기존 값은 전혀 건드리지 않음)
     const jibunDetail = makeJibunDetail_(jibun, detail);
+
+    // ⭐ v5.0 [추가] : 제2배송지 (입출고 DB Select → GAS가 AddressBook에서 찾아준 값)
+    const secondName = row.secondDest || "";
+    const secondTel  = row.secondDestTel || "";
+    const secondAddr = row.secondDestAddr || "";
+    const secondOk   = row.secondDestMatched === true;
+    const secondAll  = [secondName, secondTel, secondAddr].filter(Boolean).join("\n");
     const deliveryType = row.deliveryType || row.납품형태 || "택배 발송";
     const spec = row.spec || row.규격 || row["구분(규격)"] || "";
     const qty = row.qty || row.수량 || "";
@@ -577,6 +616,26 @@
 
       </div>
 
+
+      ${secondName ? `
+      <div class="second-box">
+
+        <div class="second-head">
+          <span class="second-title">🚩 제2배송지 (여기로 납품)</span>
+          ${secondOk
+            ? '<span class="second-badge ok">주소 연결됨</span>'
+            : '<span class="second-badge warn">주소 미등록</span>'}
+        </div>
+
+        ${makeInfoRow("🏢 납품처", secondName)}
+        ${makeInfoRow("📞 연락처", secondTel)}
+        ${makeInfoRow("🏠 주소", secondAddr)}
+
+        <button class="copy-btn second-copy" data-copy="${escapeHtml(secondAll)}">
+          제2배송지 전체 복사
+        </button>
+
+      </div>` : ""}
 
       ${makeInfoRow("📞 연락처", phone)}
       ${makeInfoRow("📍 검색주소", search)}
@@ -1035,6 +1094,7 @@
 </script>
 
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
