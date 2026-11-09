@@ -492,7 +492,36 @@
 
 
     if (result.ok === false) {
-      showError(result.error || result.message || "데이터를 가져오지 못했습니다.");
+
+      const errorMessage =
+        result.error || result.message || "데이터를 가져오지 못했습니다.";
+
+      // 인증 오류일 때만 저장된 토큰 초기화 및 재입력 요청
+      if (String(errorMessage).indexOf("접근 권한이 없습니다.") !== -1) {
+
+        // 잘못된 토큰만 삭제 (다른 데이터는 건드리지 않음)
+        localStorage.removeItem("PROZYME_PWA_TOKEN");
+
+        // 토큰 입력창 다시 표시
+        document.getElementById("tokenBox").classList.remove("hidden");
+
+        // 이전 입력값 비우기
+        document.getElementById("tokenInput").value = "";
+
+        document.getElementById("status").textContent =
+          "🔐 PWA 접속 토큰 인증 실패";
+
+        document.getElementById("cards").innerHTML =
+          '<div class="empty">'
+          + '저장된 접속 토큰이 유효하지 않습니다.<br>'
+          + 'GAS에서 사용하는 올바른 PWA 토큰을 다시 입력해주세요.'
+          + '</div>';
+
+        return;
+      }
+
+      // 인증 오류가 아닌 기존 오류는 기존 방식 그대로 표시
+      showError(errorMessage);
       return;
     }
 
