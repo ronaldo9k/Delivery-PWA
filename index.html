@@ -202,6 +202,137 @@
 
     .smartlogen-btn:active { transform: scale(0.94); }
   </style>
+
+  <!-- ==========================================================
+       ⭐ v6.0 [추가] : 매뉴얼 버튼 + 매뉴얼 모달 스타일
+       (기존 스타일은 한 줄도 건드리지 않고 "아래에 추가"만 했습니다)
+       ========================================================== -->
+  <style>
+
+    /* 우측 상단 버튼 2개를 나란히 놓기 위한 묶음
+       · 원래 ".smartlogen-btn" 은 position:absolute 로 혼자 떠 있었는데,
+         버튼이 2개가 되면 제목과 겹칠 수 있어서 "제목 위 한 줄"로 올렸습니다.
+         (기존 .smartlogen-btn 스타일 자체는 그대로 두고, 묶음 안에서만 static) */
+    .top-links {
+      display: flex; justify-content: flex-end;
+      align-items: center; gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* 묶음 안에서는 기존 절대위치를 풀어서 옆으로 나열한다 */
+    .top-links .smartlogen-btn { position: static; }
+
+    /* 매뉴얼 버튼 : 스마트로젠 버튼과 같은 모양, 글자만 버튼용 */
+    .manual-btn {
+      font-family: inherit; cursor: pointer;
+      background: rgba(212, 175, 55, 0.26);
+      -webkit-appearance: none; appearance: none;
+    }
+
+    /* ---------- 매뉴얼 모달 ---------- */
+    .mn-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      display: none; background: rgba(0, 0, 0, 0.85);
+    }
+
+    .mn-modal.open { display: flex; }
+
+    .mn-panel {
+      position: relative;
+      margin: auto;
+      width: min(760px, calc(100% - 14px));
+      max-height: 92vh; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: #121212; border: 1px solid #3d3a2a;
+      border-radius: 16px; padding: 14px 14px 30px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    }
+
+    .mn-close {
+      position: sticky; top: 0; z-index: 5;
+      display: block; width: 100%; height: 42px; margin-bottom: 10px;
+      border: 0; border-radius: 10px;
+      background: #d4af37; color: #111;
+      font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+    }
+
+    /* ---------- 매뉴얼 본문 ---------- */
+    .mn { color: #ddd; font-size: 13.5px; line-height: 1.72; }
+
+    .mn-hero {
+      text-align: center; padding: 10px 0 16px;
+      border-bottom: 1px dashed #3a3a3a; margin-bottom: 16px;
+    }
+    .mn-hero-title { font-size: 19px; font-weight: 800; color: #d4af37; }
+    .mn-hero-sub { margin-top: 6px; font-size: 12px; color: #aaa; }
+    .mn-hero-tag {
+      display: inline-block; margin-top: 9px; padding: 4px 10px;
+      border: 1px solid #806b27; border-radius: 999px;
+      color: #d4af37; font-size: 10.5px; font-weight: 700;
+    }
+
+    .mn-sec { margin-bottom: 22px; }
+
+    .mn-h {
+      font-size: 14.5px; font-weight: 800; color: #fff;
+      border-left: 3px solid #d4af37; padding-left: 9px;
+      margin-bottom: 10px;
+    }
+
+    .mn-p { margin: 8px 0; }
+
+    .mn-ol, .mn-ul { margin: 8px 0; padding-left: 20px; }
+    .mn-ol li, .mn-ul li { margin: 5px 0; }
+
+    .mn-card {
+      background: #1b1b1b; border: 1px solid #333; border-radius: 12px;
+      padding: 11px 12px; margin: 9px 0;
+    }
+    .mn-card-t { font-weight: 800; color: #d4af37; font-size: 13px; margin-bottom: 6px; }
+
+    .mn-note {
+      margin: 9px 0; padding: 9px 11px;
+      background: rgba(212, 175, 55, 0.09);
+      border-left: 3px solid #806b27; border-radius: 8px;
+      font-size: 12.5px; color: #cfc9b4;
+    }
+
+    .mn-table-wrap { overflow-x: auto; margin: 9px 0; }
+
+    .mn-table {
+      width: 100%; border-collapse: collapse; font-size: 12px;
+      min-width: 420px;
+    }
+    .mn-table th, .mn-table td {
+      border: 1px solid #333; padding: 6px 7px;
+      text-align: left; vertical-align: top;
+    }
+    .mn-table th { background: #242424; color: #d4af37; font-weight: 800; }
+    .mn-table td { color: #d5d5d5; }
+
+    .mn-pre {
+      background: #0d0d0d; border: 1px solid #333; border-radius: 10px;
+      padding: 11px; margin: 9px 0; overflow-x: auto;
+      font-size: 11.5px; line-height: 1.65; color: #d8d8d8;
+      white-space: pre; font-family: ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    .mn code {
+      background: #262626; border-radius: 5px;
+      padding: 1px 5px; font-size: 11.5px; color: #d4af37;
+    }
+
+    .mn-sec-gold {
+      border: 1px solid #806b27; border-radius: 14px;
+      padding: 13px 12px; background: rgba(212,175,55,0.05);
+    }
+
+    .mn-foot {
+      margin-top: 18px; padding-top: 12px; border-top: 1px dashed #3a3a3a;
+      text-align: center; font-size: 11px; color: #777;
+    }
+
+  </style>
 </head>
 
 <body>
@@ -211,9 +342,18 @@
   <div class="header">
 
     <!-- ⭐ v3.2 [추가] : 스마트로젠 앱 바로가기 (우측 상단) -->
-    <a id="smartLogenBtn" class="smartlogen-btn"
-       href="http://smart.ilogen.com:8080/SmartLogen/login"
-       target="_blank" rel="noopener">&#128666; 스마트로젠</a>
+    <!-- ⭐ v6.0 [추가] : 그 "바로 옆"에 매뉴얼 버튼을 함께 배치 -->
+    <div class="top-links">
+
+      <a id="smartLogenBtn" class="smartlogen-btn"
+         href="http://smart.ilogen.com:8080/SmartLogen/login"
+         target="_blank" rel="noopener">&#128666; 스마트로젠</a>
+
+      <button id="manualBtn" class="smartlogen-btn manual-btn" type="button">
+        &#128214; 매뉴얼
+      </button>
+
+    </div>
     <div class="title">푸로찜 에스</div>
     <div class="subtitle">FENOMENO 김경우님 (납품요청일 기준 택배 어제~내일 표시됨!)</div>
   </div>
@@ -247,6 +387,243 @@
 </div>
 
 
+<!-- ==========================================================
+     ⭐ v6.0 [추가] : 매뉴얼 모달 (버튼을 누르면 이 안이 열립니다)
+     · 앱 화면(.app) 바깥에 두어서 카드/복사 버튼과 절대 겹치지 않게 했습니다.
+     ========================================================== -->
+<div id="manualModal" class="mn-modal">
+
+  <div class="mn-panel">
+
+    <button id="manualClose" class="mn-close" type="button">✕ 닫기 (매뉴얼)</button>
+
+    <!-- ===== 매뉴얼 본문 시작 ===== -->
+<div class="mn">
+
+  <div class="mn-hero">
+    <div class="mn-hero-title">📖 택배 자동화 사용설명서</div>
+    <div class="mn-hero-sub">푸로찜 에스 · 택배 발송 Slack 자동 알림 + 택배 카드</div>
+    <div class="mn-hero-tag">초등생도 읽을 수 있게 아주 쉽게 설명했어요</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">0. 30초 요약 (이것만 알아도 됩니다)</div>
+    <div class="mn-p">노션에 <b>「택배발송 ✅」</b> 체크가 들어오면, <b>1분 안에</b> 컴퓨터(GAS)가 혼자 일을 합니다.</div>
+    <ol class="mn-ol">
+      <li>Slack 으로 <b>“택배 보내세요” 알림</b>을 보냅니다.</li>
+      <li>노션 그 페이지에 <b>「전송완료」 도장</b>을 찍습니다. (같은 알람이 두 번 오지 않게)</li>
+      <li>구글시트 <b>이력</b>에 한 줄을 남깁니다.</li>
+      <li>폰의 <b>택배 카드 앱</b>에서 그 건이 카드로 보입니다.</li>
+    </ol>
+    <div class="mn-note">사람이 하는 일은 딱 하나! 카드를 보고 <b>스마트로젠</b>에 붙여넣어 송장을 접수하는 것입니다.</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">1. 등장인물 (부품 8개)</div>
+    <div class="mn-table-wrap">
+      <table class="mn-table">
+        <thead><tr><th>이름</th><th>정체</th><th>하는 일</th></tr></thead>
+        <tbody>
+          <tr><td>노션 「푸로찜 입출고 DB」</td><td>주문서가 쌓이는 곳</td><td>거래처·규격·수량·납품요청일·제2배송지·택배발송 ✅·Slack전송완료 도장</td></tr>
+          <tr><td>노션 「거래처 DB」</td><td>내 거래처 명단</td><td>거래처 이름 · 연락처 1 · 도로명주소 · 지번주소</td></tr>
+          <tr><td>노션 「제2배송처 관리 DB」</td><td>제2배송지 명단<br>(★이번에 새로 연결)</td><td>거래처명 · 상세주소 · 연락처</td></tr>
+          <tr><td>구글시트 이력</td><td>보낸 기록장</td><td>Slack 보낸 성공/실패를 19칸짜리 한 줄로 저장</td></tr>
+          <tr><td>GAS (구글 앱스 스크립트)</td><td>일하는 일꾼</td><td>1분마다 깨어나 노션을 읽고 Slack 으로 쏘고 도장을 찍음</td></tr>
+          <tr><td>Slack</td><td>알림판</td><td>“택배 발송 요청” 메시지를 받는 곳</td></tr>
+          <tr><td>택배 카드 (PWA)</td><td>폰 화면</td><td>GitHub 의 index.html. 카드를 예쁘게 보여주고 복사 버튼 제공</td></tr>
+          <tr><td>스마트로젠</td><td>실제 송장 앱</td><td>복사한 납품처·연락처·주소를 붙여넣어 접수</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">2. 자동은 언제 시작되나요? (방아쇠 3개)</div>
+
+    <div class="mn-card">
+      <div class="mn-card-t">① 1분 타이머 A — 「택배발송」 체크를 대신 켜주는 일꾼</div>
+      <div class="mn-p">함수 <code>syncShippingFlagFromDeliveryType</code></div>
+      <div class="mn-p">조건 : <b>납품형태 = 「택배 발송」 또는 「택배 제2배송처」</b> 이고 <b>택배발송 체크가 꺼져 있고</b> <b>Slack전송완료가 비어 있는</b> 페이지.</div>
+      <div class="mn-p">하는 일 : 그 페이지의 <b>택배발송 체크박스를 자동으로 켭니다</b>. (사람이 손으로 체크 안 해도 됨)</div>
+      <div class="mn-note">이미 도장이 찍힌 옛날 페이지는 절대 다시 켜지 않습니다. 그래서 옛날 190건이 갑자기 알림으로 몰려오지 않아요.</div>
+    </div>
+
+    <div class="mn-card">
+      <div class="mn-card-t">② 1분 타이머 B — 진짜 알림을 쏘는 일꾼 (심장)</div>
+      <div class="mn-p">함수 <code>processShippingNotifications</code></div>
+      <div class="mn-p">조건 : <b>택배발송 체크가 켜진</b> 페이지를 노션에서 찾아옵니다.</div>
+      <div class="mn-p">하는 일 : 한 건씩 Slack 전송 → 성공하면 노션에 도장 → 이력 시트에 기록.</div>
+      <div class="mn-p">안전장치 : 한 번에 최대 <b>20건</b>, 노션 호출 사이 <b>0.35초</b> 쉼, 동시 실행 금지(<code>LockService</code>).</div>
+    </div>
+
+    <div class="mn-card">
+      <div class="mn-card-t">③ 사람 손 — 웹앱 새로고침</div>
+      <div class="mn-p">택배 카드에서 <b>🔄 새로고침</b>을 누르면 <code>doGet</code> → <code>getRecentShippingCards_</code> 가 실행되어 이력 시트를 읽어 카드로 보여줍니다.</div>
+      <div class="mn-note">이때 <b>PWA 접속 토큰</b>(<code>PWA_ACCESS_TOKEN</code>)이 맞아야만 데이터를 줍니다. 틀리면 “접근 권한이 없습니다.”</div>
+    </div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">3. 알림 1건이 처리되는 순서 (①~⑨)</div>
+    <ol class="mn-ol">
+      <li><b>노션</b>에서 새 주문 페이지에 납품형태를 「택배 발송」으로 입력.</li>
+      <li><b>타이머 A</b>가 1분 안에 발견 → <b>택배발송 ✅ 자동 체크</b>.</li>
+      <li><b>타이머 B</b>가 그 페이지를 읽음 → <code>sendOnePage_</code> 시작.</li>
+      <li>입출고 DB에서 <b>연락처 1 / 주소 / 지번주소</b>를 먼저 읽음.</li>
+      <li><b>거래처(Relation)</b> 페이지를 한 번 더 열어 <b>거래처명·연락처·도로명·지번</b>을 보완.</li>
+      <li><b>「제2배송지」 Select</b>에 값이 있으면 <b>제2배송처 관리 DB</b>에서 <b>연락처·주소</b>를 찾아옴. (★이번에 고친 부분)</li>
+      <li><code>buildSlackMessage_</code>가 메시지를 만들고 <b>Slack</b>으로 전송.</li>
+      <li>성공하면 노션에 <b>Slack전송완료 = 「전송완료」</b> 도장 + <b>택배발송 체크 해제</b> (<code>updatePageFlags_</code>).</li>
+      <li><b>이력 시트</b>에 19칸 한 줄 저장 (<code>appendHistory_</code>). → 택배 카드에 등장.</li>
+    </ol>
+    <div class="mn-note">만약 7번에서 Slack 전송이 실패하면? 도장을 <b>찍지 않습니다</b> → 다음 1분에 다시 시도합니다. 이력에는 <b>❌ 실패</b>로 남습니다.</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">4. 노션 속성은 어디로 흘러가나요?</div>
+    <div class="mn-table-wrap">
+      <table class="mn-table">
+        <thead><tr><th>노션 속성</th><th>타입</th><th>읽는 곳</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td>납품형태</td><td>Select</td><td>입출고 DB</td><td>Slack 제목 · 카드 배지 · 택배 대상 판정</td></tr>
+          <tr><td>택배발송</td><td>Checkbox</td><td>입출고 DB</td><td>알림을 보낼지 결정하는 스위치</td></tr>
+          <tr><td>Slack전송완료</td><td>Select</td><td>입출고 DB</td><td>도장. 값이 있으면 절대 재전송 안 함</td></tr>
+          <tr><td>납품요청일</td><td>Date</td><td>입출고 DB</td><td>Slack 날짜 · 카드 표시 기간(어제~내일)</td></tr>
+          <tr><td>납품일자</td><td>Date</td><td>입출고 DB</td><td>값이 있으면 카드에서 <b>숨김</b> (송장 출력 끝난 건)</td></tr>
+          <tr><td>거래처</td><td>Relation</td><td>입출고 → 거래처 DB</td><td>거래처명 · 연락처 · 주소 보완</td></tr>
+          <tr><td>연락처 1 / 주소 / 지번주소</td><td>Text</td><td>입출고 DB</td><td>Slack 연락처·주소, 카드 연락처·지번</td></tr>
+          <tr><td>구분(규격) · 수량</td><td>Select · Number</td><td>입출고 DB</td><td>Slack 규격/수량 · 카드 메타</td></tr>
+          <tr><td><b>제2배송지</b></td><td>Select</td><td>입출고 → <b>제2배송처 관리 DB</b></td><td>금색 박스의 납품처·연락처·주소</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">5. Slack 메시지는 이렇게 생겼어요</div>
+    <pre class="mn-pre">🚚 [ 택배 발송 요청 ]
+📦 납품형태 : 택배 발송
+━━━━━━━━━━━━━━━━━━━━━━
+
+🏢 거래처        (코드블록 → 탭하면 복사)
+📞 연락처 1
+📍 검색주소      ← 시/도·구를 뗀 "동/읍/면"부터 (스마트로젠 검색칸용)
+🏠 상세주소      ← 콤마 뒤 + 괄호 메모
+🗺️ 도로명 DB주소
+🧭 지번주소
+━━━━━━━━━━━━━━━━━━━━━━
+🚩 제2배송지 (실제 납품처) : OOO상사   ← 제2배송지가 있을 때만 나옴
+📞 제2 연락처
+🏠 제2 주소
+━━━━━━━━━━━━━━━━━━━━━━
+📦 규격 / 수량 : 500g / 10개
+📅 납품요청일 : 2026-11-11</pre>
+    <div class="mn-note">주소를 <b>검색주소</b>와 <b>상세주소</b>로 쪼개는 규칙은 <code>splitAddress_</code> 하나뿐입니다. (괄호 메모는 떼어내고, 콤마 뒤는 상세로, 첫 “동/읍/면/리/가/로/길”부터가 검색주소)</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">6. 택배 카드에 카드가 뜨는 조건 (3개를 모두 만족)</div>
+    <ol class="mn-ol">
+      <li>이력 시트의 <b>전송결과가 「✅ 전송완료」</b> 인 줄</li>
+      <li><b>납품형태가 「택배 발송」 또는 「택배 제2배송처」</b></li>
+      <li><b>납품요청일이 어제·오늘·내일</b> 중 하나이고, 그 페이지에 <b>납품일자가 비어 있음</b></li>
+    </ol>
+    <div class="mn-note">GAS와 웹앱이 <b>똑같은 조건을 두 번</b> 검사합니다(이중 안전장치). 그래서 GAS가 실수해도 폰 화면에 옛날 건이 몰려오지 않아요.</div>
+  </div>
+
+  <div class="mn-sec mn-sec-gold">
+    <div class="mn-h">7. ★ 제2배송지 — 이번에 고친 부분</div>
+
+    <div class="mn-p"><b>원래 내가 원한 그림 (3단계)</b></div>
+    <ol class="mn-ol">
+      <li><b>1단계</b> · 입출고 DB의 <b>「제2배송지」(Select)</b> 에서 <b>이름 하나</b>를 읽는다. 예: “대한물류”</li>
+      <li><b>2단계</b> · 그 이름으로 <b>제2배송처 관리 DB</b>를 뒤져 <b>연락처·상세주소</b>를 찾는다.</li>
+      <li><b>3단계</b> · 카드 맨 위 <b>금색 박스</b>에 <b>납품처 · 연락처 · 주소</b> 3개를 보여준다.</li>
+    </ol>
+
+    <div class="mn-p"><b>그런데 실제로는? (고장 난 이유)</b></div>
+    <div class="mn-p">2단계에서 <b>엉뚱한 곳</b>을 뒤졌습니다. 코드가 <b>구글시트의 「AddressBook」이라는 시트</b>를 찾아갔는데, 이 스프레드시트에는 <b>그 시트가 없습니다</b>. (AddressBook은 <b>발주서 웹앱</b> 쪽 다른 GAS의 시트)</div>
+    <div class="mn-p">그래서 <b>1단계 이름</b>은 노션에서 잘 나왔지만(= 금색 박스의 “납품처”는 보임), <b>2단계에서 아무것도 못 찾아</b> 연락처·주소가 빈 값 → 화면에 <b>“-”</b> 로만 표시된 것입니다.</div>
+
+    <div class="mn-p"><b>어떻게 고쳤나?</b></div>
+    <ul class="mn-ul">
+      <li>이제 <b>노션 「제2배송처 관리 DB」를 1순위</b>로 읽습니다. (실제 데이터가 있는 곳)</li>
+      <li>DB를 찾는 방법은 2가지 → ① 스크립트 속성 <code>SECOND_DEST_DATABASE_ID</code> 에 주소를 넣으면 그 DB, ② 안 넣으면 <b>이름에 “제2배송처”가 든 DB를 자동으로 찾아냄</b>.</li>
+      <li>속성 이름이 <b>“거래처명”이 아니라 “거래처/상호/업체명”</b>이어도, <b>“연락처”가 “전화번호/휴대폰”</b>이어도 찾도록 <b>후보 이름을 여러 개</b> 준비했습니다.</li>
+      <li>구글시트 AddressBook은 “혹시 있을 때만” 쓰는 <b>2순위 보조</b>로 남겨뒀습니다. (있으면 좋고, 없어도 됨)</li>
+      <li>그래도 못 찾으면 카드에 <b>“주소 미등록”</b> 배지가 뜹니다. (거짓으로 채우지 않음)</li>
+    </ul>
+
+    <div class="mn-note">확인 방법 : GAS 편집기에서 <code>testSecondDestLookup</code> 함수를 ▶ 실행 → 로그에 <b>DB ID · 읽어온 건수 · 매칭 결과</b>가 그대로 나옵니다.</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">8. 왜 알람이 무한 반복되지 않나요?</div>
+    <div class="mn-p">비밀은 <b>도장</b>입니다. Slack 전송에 <b>성공한 순간에만</b> 노션의 <b>Slack전송완료 = 「전송완료」</b> 를 찍습니다. 타이머 B는 도장이 있는 페이지를 <b>무조건 건너뜁니다</b>.</div>
+    <div class="mn-p">전송이 <b>실패</b>하면 도장을 안 찍습니다 → 1분 뒤 다시 시도 → 성공하면 그때 도장. 이게 정상 동작입니다.</div>
+    <div class="mn-note">예전 버전이 무한 반복이었던 이유 : 「Slack전송완료」를 <b>체크박스</b>로 착각해서 도장이 안 찍혔기 때문. 지금은 <b>Select</b> 방식으로 바뀌어 정상입니다.</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">9. 이력 시트 19칸 (A ~ S열)</div>
+    <div class="mn-table-wrap">
+      <table class="mn-table">
+        <thead><tr><th>열</th><th>내용</th><th>열</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>전송일시</td><td>K</td><td>도로명 DB주소</td></tr>
+          <tr><td>B</td><td>입출고DB 페이지ID</td><td>L</td><td>지번주소</td></tr>
+          <tr><td>C</td><td>Notion URL</td><td>M</td><td>전송결과 (✅ / ❌)</td></tr>
+          <tr><td>D</td><td>납품형태</td><td>N</td><td>비고 (실패 사유)</td></tr>
+          <tr><td>E</td><td>거래처</td><td><b>O</b></td><td><b>제2배송지</b> ★</td></tr>
+          <tr><td>F</td><td>연락처1</td><td><b>P</b></td><td><b>제2배송지 연락처</b> ★</td></tr>
+          <tr><td>G</td><td>규격</td><td><b>Q</b></td><td><b>제2배송지 상세주소</b> ★</td></tr>
+          <tr><td>H</td><td>수량</td><td><b>R</b></td><td><b>제2배송지 매칭</b> (OK/미등록)</td></tr>
+          <tr><td>I</td><td>납품요청일</td><td>S</td><td>(여유)</td></tr>
+          <tr><td>J</td><td>검색주소</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mn-note">★ 표시 4칸은 <b>맨 뒤에 새로 추가</b>한 열입니다. 앞의 0~14번 위치를 하나도 안 밀었기 때문에 기존 코드가 깨지지 않습니다.</div>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">10. 뭔가 이상할 때 확인 순서</div>
+    <ol class="mn-ol">
+      <li><b>Slack 알림이 안 와요</b> → 노션에서 ① 납품형태가 정확히 「택배 발송」인지 ② 택배발송 ✅ 가 켜졌는지 ③ Slack전송완료에 도장이 남아있지 않은지 확인.</li>
+      <li><b>카드가 안 보여요</b> → 납품요청일이 어제~내일인지, 납품일자가 채워져 있지는 않은지 확인. (납품일자를 비우면 다시 나타남)</li>
+      <li><b>연락처·주소가 “-”</b> → <code>testSecondDestLookup</code> 실행. 로그에 “찾지 못함”이 뜨면 ① GAS 통합에 그 DB를 <b>연결(공유)</b>했는지 ② 그 업체 이름이 DB의 거래처명과 <b>똑같이</b> 적혀 있는지 확인.</li>
+      <li><b>토큰 오류</b> → GAS에서 <code>setupPwaToken</code> 실행해 나온 값을 웹앱에 다시 입력.</li>
+      <li><b>웹앱이 연결 실패</b> → <code>GAS_API_URL</code> 이 현재 배포된 웹앱 주소인지 확인 (재배포하면 주소가 바뀔 수 있음).</li>
+    </ol>
+  </div>
+
+  <div class="mn-sec">
+    <div class="mn-h">11. GAS 스크립트 속성 (열쇠 목록)</div>
+    <div class="mn-table-wrap">
+      <table class="mn-table">
+        <thead><tr><th>속성 이름</th><th>필수</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td>NOTION_TOKEN</td><td>필수</td><td>노션 통합 토큰</td></tr>
+          <tr><td>SLACK_WEBHOOK_URL</td><td>필수</td><td>Slack Incoming Webhook 주소</td></tr>
+          <tr><td>PWA_ACCESS_TOKEN</td><td>필수</td><td>택배 카드 접속 열쇠 (<code>setupPwaToken</code> 이 자동 생성)</td></tr>
+          <tr><td><b>SECOND_DEST_DATABASE_ID</b></td><td>선택</td><td>제2배송처 관리 DB 주소/ID. <b>비워두면 자동 탐색</b></td></tr>
+          <tr><td>ADDRESSBOOK_SS_ID</td><td>선택</td><td>구글시트 AddressBook 이 따로 있을 때만 (없으면 무시)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mn-foot">문서 버전 v6.0 · 대상 코드 : GAS v4.1 + 택배 카드 v6.0</div>
+
+</div>
+
+    <!-- ===== 매뉴얼 본문 끝 ===== -->
+
+  </div>
+
+</div>
+
+
 <script>
 
   // ==========================================================
@@ -254,7 +631,7 @@
   // ==========================================================
 
   const GAS_API_URL =
-    "https://script.google.com/macros/s/AKfycbyYIePtAY3aSN9Rkef4EtnWyjNcPKWzUVIfX7KbVw-RGG2eD8_uHlPUWPFc1EkdGLyL8A/exec";
+    "https://script.google.com/macros/s/AKfycbx6T8khLhyKfyjwfF_1iHYkMBufniBR_Xb9-X2pmFVkuBtwh_76smBoi8lmj9znwim-Zw/exec";
 
 
   // ==========================================================
@@ -299,6 +676,64 @@
   }
 
   setupSmartLogenButton();
+
+
+  // ==========================================================
+  // ⭐ v6.0 [추가] : 매뉴얼 버튼 (스마트로젠 버튼 바로 옆)
+  //    누르면 매뉴얼 모달이 열리고, 닫기/바깥탭/Esc 로 닫힙니다.
+  //    (기존 복사 로직·카드 로직은 전혀 건드리지 않았습니다)
+  // ==========================================================
+
+  function setupManualButton() {
+
+    const btn = document.getElementById("manualBtn");
+    const modal = document.getElementById("manualModal");
+    const closeBtn = document.getElementById("manualClose");
+
+    if (!btn || !modal) return;
+
+    btn.addEventListener("click", function() {
+
+      modal.classList.add("open");
+      modal.scrollTop = 0;
+
+      // 매뉴얼을 보는 동안 뒤 화면이 스크롤되지 않게 잠금
+      document.body.style.overflow = "hidden";
+
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeManual_);
+    }
+
+    // 바깥(어두운 부분)을 탭해도 닫힘
+    modal.addEventListener("click", function(e) {
+      if (e.target === modal) {
+        closeManual_();
+      }
+    });
+
+    // PC 에서 Esc 키로도 닫힘
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        closeManual_();
+      }
+    });
+
+  }
+
+
+  function closeManual_() {
+
+    const modal = document.getElementById("manualModal");
+
+    if (modal) {
+      modal.classList.remove("open");
+    }
+
+    document.body.style.overflow = "";
+
+  }
 
 
   // ==========================================================
@@ -1123,6 +1558,7 @@
 </script>
 
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
